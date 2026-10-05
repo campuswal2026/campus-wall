@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保税一中校园墙</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===================== 登录/注册页 ===================== -->
+    <div id="authPage" class="auth-page">
+        <div class="auth-box">
+            <h1>🏫 保税一中校园墙</h1>
+            <div class="rule-box">
+                <b>《校园墙使用公约》</b>
+                <p>1. 禁止发布侮辱谩骂、人身攻击、造谣传谣、人肉他人等违法内容；</p>
+                <p>2. 禁止广告、刷单、赌博、色情等违规内容；</p>
+                <p>3. 匿名投稿不等于免责，后台可溯源，请文明发言；</p>
+                <p>4. 违规内容将被删除，账号将被封禁，严重者依法处理。</p>
+            </div>
+
+            <div class="tab-bar">
+                <button id="tabLogin" class="tab-btn active">登录</button>
+                <button id="tabRegister" class="tab-btn">注册</button>
+            </div>
+
+            <!-- 登录 -->
+            <div id="loginForm" class="form">
+                <input type="text" id="loginNickname" placeholder="昵称" maxlength="20">
+                <input type="password" id="loginPassword" placeholder="密码">
+                <button id="loginBtn" class="primary-btn">登 录</button>
+            </div>
+
+            <!-- 注册 -->
+            <div id="registerForm" class="form" style="display:none">
+                <input type="text" id="regNickname" placeholder="昵称（1-20字，用于前台显示）" maxlength="20">
+                <input type="text" id="regStudentNo" placeholder="学号（用于核实校内身份）" maxlength="30">
+                <input type="password" id="regPassword" placeholder="密码（至少4位）">
+                <input type="password" id="regPassword2" placeholder="确认密码">
+                <input type="text" id="regAdminCode" placeholder="管理员注册码（普通同学留空）" maxlength="30">
+                <button id="registerBtn" class="primary-btn">注 册</button>
+            </div>
+
+            <div id="authMsg" class="msg"></div>
+        </div>
+    </div>
+
+    <!-- ===================== 主界面 ===================== -->
+    <div id="mainPage" style="display:none">
+        <header>
+            <div class="header-left">
+                <h1>🏫 保税一中校园墙</h1>
+            </div>
+            <div class="header-right">
+                <button id="navFeed" class="nav-btn active">校园墙</button>
+                <button id="navProfile" class="nav-btn">我的</button>
+                <button id="navAdmin" class="nav-btn" style="display:none">管理后台</button>
+                <span id="currentUser"></span>
+                <span id="adminBadge" class="admin-badge" style="display:none">管理员</span>
+                <button id="notifyBtn" class="notify-btn" onclick="toggleNotify(event)" title="消息通知">🔔<span id="notifyBadge" class="notify-badge" style="display:none">0</span></button>
+                <button id="logoutBtn" class="small-btn">退出</button>
+            </div>
+        </header>
+
+        <!-- 消息通知面板 -->
+        <div id="notifyPanel" class="notify-panel" style="display:none"></div>
+
+        <!-- 公告栏 -->
+        <div id="announceBar" class="announce-bar"></div>
+
+        <div class="container">
+            <!-- ===== 校园墙视图 ===== -->
+            <div id="feedView">
+                <!-- 发帖框 -->
+                <div class="post-box">
+                    <div class="post-box-top">
+                        <select id="postCategory">
+                            <option value="求助">求助</option>
+                            <option value="寻物">寻物</option>
+                            <option value="吐槽">吐槽</option>
+                            <option value="表白">表白</option>
+                            <option value="二手">二手</option>
+                            <option value="其他" selected>其他</option>
+                        </select>
+                        <label class="anon-label">
+                            <input type="checkbox" id="postAnonymous"> 匿名发布
+                        </label>
+                    </div>
+                    <textarea id="postContent" placeholder="在这里发布留言...（支持图片）"></textarea>
+                    <div class="post-actions">
+                        <label class="file-btn">
+                            📷 选图片
+                            <input type="file" id="imgUpload" accept="image/*" hidden>
+                        </label>
+                        <img id="imgPreview" class="img-preview" style="display:none">
+                        <span id="imgHint" class="img-hint"></span>
+                        <button id="submitPost" class="primary-btn">发 布</button>
+                    </div>
+                </div>
+
+                <!-- 分类筛选 -->
+                <div id="feedTabs" class="feed-tabs"></div>
+
+                <!-- 帖子列表 -->
+                <div id="postList"></div>
+                <div id="listMsg" class="msg"></div>
+            </div>
+
+            <!-- ===== 个人中心视图 ===== -->
+            <div id="profileView" style="display:none">
+                <div class="profile-header">
+                    <h2>👤 我的中心</h2>
+                    <div class="profile-tabs">
+                        <button id="ptabPosts" class="tab-btn active">我的帖子</button>
+                        <button id="ptabComments" class="tab-btn">我的评论</button>
+                        <button id="ptabReports" class="tab-btn">我的举报</button>
+                    </div>
+                </div>
+                <div id="profileContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== 管理后台 ===================== -->
+    <div id="adminPage" style="display:none">
+        <header class="admin-header">
+            <div class="header-left"><h1>🛡️ 管理后台</h1></div>
+            <div class="header-right">
+                <button id="adminBack" class="small-btn">返回校园墙</button>
+            </div>
+        </header>
+        <div class="container">
+            <div id="adminTabs" class="feed-tabs"></div>
+            <div id="adminContent"></div>
+        </div>
+    </div>
+
+    <!-- ===================== 举报弹窗 ===================== -->
+    <div id="reportModal" class="modal" style="display:none">
+        <div class="modal-box">
+            <h3>🚩 举报</h3>
+            <p id="reportTargetText" style="color:#666;font-size:13px"></p>
+            <select id="reportReason">
+                <option value="辱骂攻击">辱骂攻击</option>
+                <option value="造谣传谣">造谣传谣</option>
+                <option value="广告垃圾">广告垃圾</option>
+                <option value="引战挑事">引战挑事</option>
+                <option value="色情低俗">色情低俗</option>
+                <option value="其他">其他</option>
+            </select>
+            <textarea id="reportDetail" placeholder="补充说明（选填，最多300字）" maxlength="300"></textarea>
+            <div class="modal-btns">
+                <button id="reportCancel" class="small-btn gray">取消</button>
+                <button id="reportSubmit" class="primary-btn">提交举报</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
