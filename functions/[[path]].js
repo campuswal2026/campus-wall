@@ -12,23 +12,23 @@ export async function onRequest(context) {
   };
   if (request.method === "OPTIONS") return new Response(null, { headers });
   try {
-    // 注册
+        // 注册
     if (path === "/api/register" && request.method === "POST") {
-      const { username, password, is_admin, admin_code } = await request.json();
-      if (!username || !password) return Response.json({ ok: false, msg: "昵称密码不能为空" }, { headers });
+      const { username, password, student_id, is_admin, admin_code } = await request.json();
+      if (!username || !password || !student_id) return Response.json({ ok: false, msg: "昵称、学号、密码不能为空" }, { headers });
       if (is_admin && admin_code !== ADMIN_REG_CODE) return Response.json({ ok: false, msg: "管理员注册码错误" }, { headers });
       try {
-        const r = await DB.prepare("INSERT INTO users(username,password,is_admin) VALUES(?,?,?)").bind(username, password, is_admin ? 1 : 0).run();
-        const user = await DB.prepare("SELECT id,username,is_admin FROM users WHERE id=?").bind(r.meta.last_row_id).first();
+        const r = await DB.prepare("INSERT INTO users(username,password,student_id,is_admin) VALUES(?,?,?,?)").bind(username, password, student_id, is_admin ? 1 : 0).run();
+        const user = await DB.prepare("SELECT id,username,student_id,is_admin FROM users WHERE id=?").bind(r.meta.last_row_id).first();
         return Response.json({ ok: true, msg: "注册成功", user }, { headers });
       } catch (e) {
         return Response.json({ ok: false, msg: "昵称已存在" }, { headers });
       }
     }
-    // 登录
+       // 登录
     if (path === "/api/login" && request.method === "POST") {
       const { username, password } = await request.json();
-      const user = await DB.prepare("SELECT id,username,is_admin FROM users WHERE username=? AND password=?").bind(username, password).first();
+      const user = await DB.prepare("SELECT id,username,student_id,is_admin FROM users WHERE username=? AND password=?").bind(username, password).first();
       if (!user) return Response.json({ ok: false, msg: "昵称或密码错误" }, { headers });
       return Response.json({ ok: true, user }, { headers });
     }
